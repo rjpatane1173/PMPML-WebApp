@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Ticket Booking</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Bus Ticket Booking</h1>
+  <div>
+    <label for="boardingStop">Boarding Stop:</label>
+    <select id="boardingStop">
+      <!-- Options will be populated dynamically using JavaScript -->
+    </select>
+  </div>
+  <div>
+    <label for="destinationStop">Destination Stop:</label>
+    <select id="destinationStop">
+      <!-- Options will be populated dynamically using JavaScript -->
+    </select>
+  </div>
+  <button onclick="showAvailableBuses()">Show Available Buses</button>
+  <div id="availableBuses">
+    <!-- Bus information will be displayed here -->
+  </div>
+  <script src="script3.js"></script>
+</body>
+</html>
