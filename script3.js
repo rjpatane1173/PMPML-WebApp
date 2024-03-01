@@ -1,9 +1,10 @@
 // Define stops
-var stops = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W"]
+var stops = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W"];
+
 
 // Define available buses with their routes
 var availableBuses = [
-    {
+{
 id:1,
 name:"311",
 route:["A","B","C","D","E","F","G","H","I","J"],
@@ -147,7 +148,7 @@ fares:{
 "A-B":5,
 "A-P":10,
 "A-Q":10,
-"A-S":15,
+"A-S":20,
 "A-T":15,
 "B-P":5,
 "B-Q":10,
@@ -203,26 +204,31 @@ function getReverseRoute(route) {
   return route.slice().reverse();
 }
 
-// this is try
-// Function to preprocess fares and add reverse combinations
-// Function to preprocess fares and add reverse combinations
 function preprocessFares() {
   availableBuses.forEach(function(bus) {
     var newFares = {};
     Object.keys(bus.fares).forEach(function(key) {
+      // Copy existing fare
       newFares[key] = bus.fares[key];
+      
+      // Split the key into stops
       var stops = key.split("-");
+      
+      // Generate reverse key
       var reverseKey = stops[1] + "-" + stops[0];
+      
+      // Check if reverse key doesn't already exist
       if (!bus.fares.hasOwnProperty(reverseKey)) {
-        // Add reverse combination only if it doesn't already exist
+        // Add reverse combination
         newFares[reverseKey] = bus.fares[key];
       }
     });
-    bus.fares = newFares; // Replace original fares with processed fares
+    
+    // Replace original fares with processed fares
+    bus.fares = newFares;
   });
 }
 
-// this is try ends here from line 58
 
 
 // Populate dropdown lists with stops
@@ -239,6 +245,37 @@ stops.forEach(function(stop) {
   option.text = stop;
   option.value = stop;
   destinationSelect.add(option);
+});
+
+// Populate dropdown lists with stops based on available routes from the boarding stop
+function populateDestinationOptions(boardingStop) {
+  var destinationSelect = document.getElementById("destinationStop");
+  destinationSelect.innerHTML = ""; // Clear existing options
+  
+  stops.forEach(function(stop) {
+    if (canReachDestinationFromBoarding(boardingStop, stop)) {
+      var option = document.createElement("option");
+      option.text = stop;
+      option.value = stop;
+      destinationSelect.add(option);
+    }
+  });
+}
+// Function to check if a destination stop can be reached from the boarding stop
+function canReachDestinationFromBoarding(boardingStop, destinationStop) {
+  for (var i = 0; i < availableBuses.length; i++) {
+    var bus = availableBuses[i];
+    if (bus.route.includes(boardingStop) && bus.route.includes(destinationStop)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Event listener for changes in the boarding stop selection
+document.getElementById("boardingStop").addEventListener("change", function() {
+  var boardingStop = this.value;
+  populateDestinationOptions(boardingStop);
 });
 
 // Call the preprocessFares function to preprocess the fares data
@@ -290,16 +327,11 @@ function calculateFare(boardingStop, destinationStop) {
       var destinationIndex = bus.route.indexOf(destinationStop);
       
       // Determine the direction of travel based on the stop indices
-      if (boardingIndex < destinationIndex) {
-        var fareKey = boardingStop + "-" + destinationStop;
-      } else {
-        // If stops are in reverse order, calculate fare using reverse route
-        var reverseRoute = getReverseRoute(bus.route);
-        var reverseBoardingIndex = reverseRoute.indexOf(boardingStop);
-        var reverseDestinationIndex = reverseRoute.indexOf(destinationStop);
-        var fareKey = reverseRoute.slice(reverseBoardingIndex, reverseDestinationIndex + 1).join('-');
-      }
-
+      var forwardTravel = boardingIndex < destinationIndex;
+      
+      // Determine the fare key based on the direction of travel
+      var fareKey = forwardTravel ? boardingStop + "-" + destinationStop : destinationStop + "-" + boardingStop;
+      
       // Check if fare is defined for the specific combination
       if (bus.fares.hasOwnProperty(fareKey)) {
         return bus.fares[fareKey];
