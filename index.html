@@ -9,10 +9,16 @@
 <body>
   <h1>Bus Ticket Booking</h1>
   <div>
+    <!--try start
+    <label for="boardingStopInput">Enter Boarding Stop:</label>
+<input type="text" id="boardingStopInput" placeholder="Enter boarding stop" list="boardingStopSuggestions">
+<datalist id="boardingStopSuggestions"></datalist>
+    try start-->
     <label for="boardingStop">Boarding Stop:</label>
     <select id="boardingStop">
-      <!-- Options will be populated dynamically using JavaScript -->
-    </select>
+       <!--Options will be populated dynamically using JavaScript-->
+    </select> 
+  
   </div>
   <div>
     <label for="destinationStop">Destination Stop:</label>
@@ -24,6 +30,19 @@
   <div id="availableBuses">
     <!-- Bus information will be displayed here -->
   </div>
+  <!-- -->
+   <div id="adultsContainer">
+        <!-- Buttons for selecting number of adults will be displayed here -->
+    </div>
+  <div id="ticketInfo"></div>
+<!-- Confirm Ticket button -->
+  <button id="confirmTicketBtn" onclick="confirmTicket()" style="display: none;">Confirm Ticket</button>
+  <div id="passwordContainer"></div>
+
+
+  <!-- -->
+
+  <script src="pmpmldataset.js"></script>
   <script src="script3.js"></script>
 </body>
 </html>
