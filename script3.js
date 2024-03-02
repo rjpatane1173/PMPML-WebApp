@@ -242,7 +242,7 @@ ticketWindow.document.write(".ticket-info { margin-top: 20px; }");
 ticketWindow.document.write(".ticket-info p { margin: 5px 0; }");
 ticketWindow.document.write(".ticket-info p strong { font-weight: bold; }");
 ticketWindow.document.write("</style></head><body>");
-ticketWindow.document.write("<img src='download.jpg' alt='PMPML Logo' style='display: block; margin: 0 auto;'>");
+ticketWindow.document.write("<img src='IMG-20240302-WA0030.jpg' alt='PMPML Logo' style='display: block; margin: 0 auto;'>");
 ticketWindow.document.write("<h1>PMPML Ticket</h1>");
 ticketWindow.document.write("<div class='ticket-info'>");
 ticketWindow.document.write("<p><strong>Date:</strong> " + date + "</p>");
