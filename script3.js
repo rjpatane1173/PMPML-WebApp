@@ -84,6 +84,22 @@ document.getElementById("boardingStop").addEventListener("change", function() {
 // Call the preprocessFares function to preprocess the fares data
 preprocessFares();
 
+/*
+function getAvailableBuses(boardingStop, destinationStop) {
+  var availableBusNames = [];
+  
+  availableBuses.forEach(function(bus) {
+    if (bus.route.includes(boardingStop) && bus.route.includes(destinationStop)) {
+      availableBusNames.push(bus.name);
+    }
+  });
+  
+  return availableBusNames;
+}
+*/
+
+
+/* this was perfect till 133
 function showAvailableBuses() {
   var boardingStop = document.getElementById("boardingStop").value;
   var destinationStop = document.getElementById("destinationStop").value;
@@ -114,18 +130,52 @@ function showAvailableBuses() {
   }
   document.getElementById("availableBuses").innerHTML = busList;
 }
+till here from 102*/
 
-function getAvailableBuses(boardingStop, destinationStop) {
-  var availableBusNames = [];
-  
-  availableBuses.forEach(function(bus) {
-    if (bus.route.includes(boardingStop) && bus.route.includes(destinationStop)) {
+// Declare a global array variable to store bus names
+var availableBusNames = [];
+
+function showAvailableBuses() {
+  var boardingStop = document.getElementById("boardingStop").value;
+  var destinationStop = document.getElementById("destinationStop").value;
+
+  // Reset availableBusNames array
+  availableBusNames = [];
+
+  var filteredBuses = availableBuses.filter(function(bus) {
+    // Check if both boarding and destination stops are in the bus route
+    var boardingIndex = bus.route.indexOf(boardingStop);
+    var destinationIndex = bus.route.indexOf(destinationStop);
+
+    var isAvailable = (boardingIndex !== -1 && destinationIndex !== -1 && boardingIndex < destinationIndex) ||
+                      (boardingIndex === -1 && destinationIndex !== -1);
+
+    // If the bus is available, push its name into availableBusNames array
+    if (isAvailable) {
       availableBusNames.push(bus.name);
     }
+
+    return isAvailable;
   });
-  
-  return availableBusNames;
+
+  var busList = "<h2>Available Buses</h2>";
+  if (filteredBuses.length > 0) {
+    busList += "<ul>";
+    filteredBuses.forEach(function(bus) {
+      var fare = calculateFare(boardingStop, destinationStop, bus);
+      busList += "<li>" + bus.name + " - Fare: $" + fare + "</li>";
+    });
+    busList += "</ul>";
+
+    // Add the "Book Ticket" button
+    var fare = calculateFare(boardingStop, destinationStop, filteredBuses[0]);
+    busList += "<button onclick='chooseAdults(\"" + filteredBuses[0].name + "\", \"" + boardingStop + "\", \"" + destinationStop + "\", " + fare + ")'>Book Ticket</button>";
+  } else {
+    busList += "<p>No buses available for the selected stops.</p>";
+  }
+  document.getElementById("availableBuses").innerHTML = busList;
 }
+
 
 // Modify the function chooseAdults() to show the Confirm Ticket button after the ticket preview
 function chooseAdults(busName, boardingStop, destinationStop, fare) {
@@ -152,7 +202,7 @@ function chooseAdults(busName, boardingStop, destinationStop, fare) {
       // Add event listener only if not added before
       if (!confirmTicketBtn.hasEventListener) {
         confirmTicketBtn.addEventListener('click', function() {
-          confirmTicket(boardingStop, destinationStop, adults, totalFare);
+          confirmTicket(boardingStop, destinationStop, adults, totalFare,availableBusNames);
           // Remove the event listener to prevent multiple calls
           confirmTicketBtn.removeEventListener('click', arguments.callee);
         });
@@ -164,13 +214,13 @@ function chooseAdults(busName, boardingStop, destinationStop, fare) {
 }
 
 // Function to confirm the ticket
-function confirmTicket(boardingStop, destinationStop, adults, totalFare) {
+function confirmTicket(boardingStop, destinationStop, adults, totalFare,availableBuses) {
   // Create a password input field
   var passwordInput = document.createElement("input");
   passwordInput.type = "password";
   passwordInput.placeholder = "Enter password";
-  var availableBusesHTML = getAvailableBuses(boardingStop, destinationStop);
-
+ /* var availableBusesHTML = getAvailableBuses(boardingStop, destinationStop);
+*/
   // Create a button to submit the password
   var submitButton = document.createElement("button");
   submitButton.textContent = "Submit";
@@ -192,13 +242,14 @@ ticketWindow.document.write(".ticket-info { margin-top: 20px; }");
 ticketWindow.document.write(".ticket-info p { margin: 5px 0; }");
 ticketWindow.document.write(".ticket-info p strong { font-weight: bold; }");
 ticketWindow.document.write("</style></head><body>");
+ticketWindow.document.write("<img src='download.jpg' alt='PMPML Logo' style='display: block; margin: 0 auto;'>");
 ticketWindow.document.write("<h1>PMPML Ticket</h1>");
 ticketWindow.document.write("<div class='ticket-info'>");
 ticketWindow.document.write("<p><strong>Date:</strong> " + date + "</p>");
 ticketWindow.document.write("<p><strong>Time:</strong> " + time + "</p>");
 ticketWindow.document.write("<p><strong>From:</strong> " + boardingStop + "</p>");
 ticketWindow.document.write("<p><strong>To:</strong> " + destinationStop + "</p>");
-ticketWindow.document.write("<p><strong>Bus ID:</strong> " + availableBusesHTML + "</p>");
+ticketWindow.document.write("<p><strong>Bus ID:</strong> " + availableBuses.join(",") + "</p>");
 ticketWindow.document.write("<p><strong>Number of Persons:</strong> " + adults + "</p>");
 ticketWindow.document.write("<p><strong>Total Amount:</strong> $" + totalFare + "</p>");
 ticketWindow.document.write("</div></body></html>");
@@ -244,3 +295,4 @@ function calculateFare(boardingStop, destinationStop) {
   }
   return "No direct bus available";
 }
+
