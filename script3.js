@@ -112,70 +112,20 @@ function showAvailableBuses() {
   } else {
     busList += "<p>No buses available for the selected stops.</p>";
   }
-
   document.getElementById("availableBuses").innerHTML = busList;
 }
 
-/*
-function chooseAdults(busName, boardingStop, destinationStop, fare) {
-  var adultsContainer = document.getElementById("adultsContainer");
-  adultsContainer.innerHTML = ""; // Clear previous buttons
+function getAvailableBuses(boardingStop, destinationStop) {
+  var availableBusNames = [];
   
-  // Create buttons for each option (1 to 5)
-  for (var i = 1; i <= 5; i++) {
-    var button = document.createElement("button");
-    button.textContent = i;
-    button.addEventListener("click", function() {
-      var adults = parseInt(this.textContent);
-      var totalFare = fare * adults;
-      var ticketInfo = document.getElementById("ticketInfo");
-      ticketInfo.innerHTML = "<h1>Preview Ticket</h1>" +
-                             "<p><strong>From:</strong> " + boardingStop + "</p>" +
-                             "<p><strong>To:</strong> " + destinationStop + "</p>" +
-                             "<p><strong>Number of Persons:</strong> " + adults + "</p>" +
-                             "<p><strong>Total Amount:</strong> $" + totalFare + "</p>";
-  document.getElementById('confirmTicketBtn').style.display = 'block';
-  document.getElementById('confirmTicketBtn').addEventListener('click', confirmTicket);
-    });
-    adultsContainer.appendChild(button);
-  }
-  // Show the Confirm Ticket button
+  availableBuses.forEach(function(bus) {
+    if (bus.route.includes(boardingStop) && bus.route.includes(destinationStop)) {
+      availableBusNames.push(bus.name);
+    }
+  });
+  
+  return availableBusNames;
 }
-// Add the Confirm Ticket button to the HTML
-var confirmTicketBtn = document.createElement('button');
-confirmTicketBtn.textContent = 'Confirm Ticket';
-confirmTicketBtn.id = 'confirmTicketBtn';
-confirmTicketBtn.style.display = 'none'; // Initially hide the button
-document.body.appendChild(confirmTicketBtn);
-
-
-// Function to confirm the ticket
-function confirmTicket() {
-  var password = prompt("Please enter the password:");
-  if (password === "1173") {
-    var ticketDetails = document.getElementById("ticketInfo").innerHTML;
-    var currentTime = new Date();
-    var date = currentTime.toDateString();
-    var time = currentTime.toLocaleTimeString();
-
-    // Open a new window to display the ticket details
-    var ticketWindow = window.open("", "PMPML Ticket", "width=600,height=400");
-    ticketWindow.document.write("<html><head><title>PMPML Ticket</title></head><body>");
-    ticketWindow.document.write("<h1 style='text-align: center;'>PMPML Ticket</h1>");
-    ticketWindow.document.write("<p><strong>Date:</strong> " + date + "</p>");
-    ticketWindow.document.write("<p style='float: left;'><strong>Time:</strong> " + time + "</p>");
-    ticketWindow.document.write("<p style='float: right;'><strong>From:</strong> " + boardingStop + "</p>");
-    ticketWindow.document.write("<p><strong>To:</strong> " + destinationStop + "</p>");
-    ticketWindow.document.write("<p><strong>Number of Persons:</strong> " + adults + "</p>");
-    ticketWindow.document.write("<p><strong>Total Amount:</strong> $" + totalFare + "</p>");
-    ticketWindow.document.write("</body></html>");
-    ticketWindow.document.close();
-  } else {
-    alert("Incorrect password. Ticket confirmation failed.");
-  }
-}
-*/
-
 
 // Modify the function chooseAdults() to show the Confirm Ticket button after the ticket preview
 function chooseAdults(busName, boardingStop, destinationStop, fare) {
@@ -219,6 +169,7 @@ function confirmTicket(boardingStop, destinationStop, adults, totalFare) {
   var passwordInput = document.createElement("input");
   passwordInput.type = "password";
   passwordInput.placeholder = "Enter password";
+  var availableBusesHTML = getAvailableBuses(boardingStop, destinationStop);
 
   // Create a button to submit the password
   var submitButton = document.createElement("button");
@@ -247,12 +198,12 @@ ticketWindow.document.write("<p><strong>Date:</strong> " + date + "</p>");
 ticketWindow.document.write("<p><strong>Time:</strong> " + time + "</p>");
 ticketWindow.document.write("<p><strong>From:</strong> " + boardingStop + "</p>");
 ticketWindow.document.write("<p><strong>To:</strong> " + destinationStop + "</p>");
+ticketWindow.document.write("<p><strong>Bus ID:</strong> " + availableBusesHTML + "</p>");
 ticketWindow.document.write("<p><strong>Number of Persons:</strong> " + adults + "</p>");
 ticketWindow.document.write("<p><strong>Total Amount:</strong> $" + totalFare + "</p>");
 ticketWindow.document.write("</div></body></html>");
 ticketWindow.document.close();
 
-    ticketWindow.document.close();
   } else {
     alert("Incorrect password. Ticket confirmation failed.");
   }
